@@ -52,39 +52,39 @@ export type AuthorizationStatus = {
 };
 
 /**
- * An event emitted by PushNotificationIOS.
- */
+* An event emitted by PushNotificationIOS.
+*/
 export type PushNotificationEventName = $Keys<{
   /**
-   * Fired when a remote notification is received. The handler will be invoked
-   * with an instance of `PushNotificationIOS`.
-   */
+  * Fired when a remote notification is received. The handler will be invoked
+  * with an instance of `PushNotificationIOS`.
+  */
   notification: string,
   /**
-   * Fired when a local notification is received. The handler will be invoked
-   * with an instance of `PushNotificationIOS`.
-   */
+  * Fired when a local notification is received. The handler will be invoked
+  * with an instance of `PushNotificationIOS`.
+  */
   localNotification: string,
   /**
-   * Fired when the user registers for remote notifications. The handler will be
-   * invoked with a hex string representing the deviceToken.
-   */
+  * Fired when the user registers for remote notifications. The handler will be
+  * invoked with a hex string representing the deviceToken.
+  */
   register: string,
   /**
-   * Fired when the user fails to register for remote notifications. Typically
-   * occurs when APNS is having issues, or the device is a simulator. The
-   * handler will be invoked with {message: string, code: number, details: any}.
-   */
+  * Fired when the user fails to register for remote notifications. Typically
+  * occurs when APNS is having issues, or the device is a simulator. The
+  * handler will be invoked with {message: string, code: number, details: any}.
+  */
   registrationError: string,
 }>;
 
 /**
- *
- * Handle push notifications for your app, including permission handling and
- * icon badge number.
- *
- * See https://reactnative.dev/docs/pushnotificationios.html
- */
+*
+* Handle push notifications for your app, including permission handling and
+* icon badge number.
+*
+* See https://reactnative.dev/docs/pushnotificationios.html
+*/
 class PushNotificationIOS {
   _data: Object;
   _alert: string | NotificationAlert;
@@ -96,12 +96,16 @@ class PushNotificationIOS {
   _badgeCount: number;
   _notificationId: string;
   /**
-   * The id of action the user has taken taken.
-   */
+  * The id of action the user has taken.
+  */
   _actionIdentifier: ?string;
+    /**
+  * The custom value of action the user has taken.
+  */
+  _actionValue: ?string;
   /**
-   * The text user has input if user responded with a text action.
-   */
+  * The text user has input if user responded with a text action.
+  */
   _userText: ?string;
   _isRemote: boolean;
   _remoteNotificationCompleteCallbackCalled: boolean;
@@ -122,25 +126,25 @@ class PushNotificationIOS {
   };
 
   /**
-   * Schedules the localNotification for immediate presentation.
-   * @deprecated use `addNotificationRequest` instead
-   */
+  * Schedules the localNotification for immediate presentation.
+  * @deprecated use `addNotificationRequest` instead
+  */
   static presentLocalNotification(details: Object) {
     RNCPushNotificationIOS.presentLocalNotification(details);
   }
 
   /**
-   * Schedules the localNotification for future presentation.
-   * @deprecated use `addNotificationRequest` instead
-   */
+  * Schedules the localNotification for future presentation.
+  * @deprecated use `addNotificationRequest` instead
+  */
   static scheduleLocalNotification(details: Object) {
     RNCPushNotificationIOS.scheduleLocalNotification(details);
   }
 
   /**
-   * Sends notificationRequest to notification center at specified firedate.
-   * Fires immediately if firedate is not set.
-   */
+  * Sends notificationRequest to notification center at specified firedate.
+  * Fires immediately if firedate is not set.
+  */
   static addNotificationRequest(request: NotificationRequest) {
     const handledRequest =
       request.fireDate instanceof Date
@@ -155,18 +159,18 @@ class PushNotificationIOS {
   }
 
   /**
-   * Sets notification category to notification center.
-   * Used to set specific actions for notifications that contains specified category
-   */
+  * Sets notification category to notification center.
+  * Used to set specific actions for notifications that contains specified category
+  */
   static setNotificationCategories(categories: NotificationCategory[]) {
     RNCPushNotificationIOS.setNotificationCategories(categories);
   }
 
   /**
-   * Cancels all scheduled localNotifications.
-   * @deprecated use `removeAllPendingNotificationRequests` instead
-   * - This method is deprecated in iOS 10 and will be removed from future release
-   */
+  * Cancels all scheduled localNotifications.
+  * @deprecated use `removeAllPendingNotificationRequests` instead
+  * - This method is deprecated in iOS 10 and will be removed from future release
+  */
   static cancelAllLocalNotifications() {
     invariant(
       RNCPushNotificationIOS,
@@ -176,8 +180,8 @@ class PushNotificationIOS {
   }
 
   /**
-   * Removes all pending notifications
-   */
+  * Removes all pending notifications
+  */
   static removeAllPendingNotificationRequests() {
     invariant(
       RNCPushNotificationIOS,
@@ -187,8 +191,8 @@ class PushNotificationIOS {
   }
 
   /**
-   * Removes pending notifications with given identifier strings.
-   */
+  * Removes pending notifications with given identifier strings.
+  */
   static removePendingNotificationRequests(identifiers: string[]) {
     invariant(
       RNCPushNotificationIOS,
@@ -198,10 +202,10 @@ class PushNotificationIOS {
   }
 
   /**
-   * Remove all delivered notifications from Notification Center.
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#removealldeliverednotifications
-   */
+  * Remove all delivered notifications from Notification Center.
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#removealldeliverednotifications
+  */
   static removeAllDeliveredNotifications(): void {
     invariant(
       RNCPushNotificationIOS,
@@ -211,10 +215,10 @@ class PushNotificationIOS {
   }
 
   /**
-   * Provides you with a list of the app’s notifications that are still displayed in Notification Center.
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#getdeliverednotifications
-   */
+  * Provides you with a list of the app’s notifications that are still displayed in Notification Center.
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#getdeliverednotifications
+  */
   static getDeliveredNotifications(
     callback: (notifications: Array<Object>) => void,
   ): void {
@@ -226,10 +230,10 @@ class PushNotificationIOS {
   }
 
   /**
-   * Removes the specified notifications from Notification Center
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#removedeliverednotifications
-   */
+  * Removes the specified notifications from Notification Center
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#removedeliverednotifications
+  */
   static removeDeliveredNotifications(identifiers: Array<string>): void {
     invariant(
       RNCPushNotificationIOS,
@@ -239,10 +243,10 @@ class PushNotificationIOS {
   }
 
   /**
-   * Sets the badge number for the app icon on the home screen.
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#setapplicationiconbadgenumber
-   */
+  * Sets the badge number for the app icon on the home screen.
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#setapplicationiconbadgenumber
+  */
   static setApplicationIconBadgeNumber(number: number) {
     invariant(
       RNCPushNotificationIOS,
@@ -252,10 +256,10 @@ class PushNotificationIOS {
   }
 
   /**
-   * Gets the current badge number for the app icon on the home screen.
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#getapplicationiconbadgenumber
-   */
+  * Gets the current badge number for the app icon on the home screen.
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#getapplicationiconbadgenumber
+  */
   static getApplicationIconBadgeNumber(callback: Function) {
     invariant(
       RNCPushNotificationIOS,
@@ -265,10 +269,10 @@ class PushNotificationIOS {
   }
 
   /**
-   * Cancel local notifications.
-   * @deprecated - use `removePendingNotifications`
-   * See https://reactnative.dev/docs/pushnotificationios.html#cancellocalnotification
-   */
+  * Cancel local notifications.
+  * @deprecated - use `removePendingNotifications`
+  * See https://reactnative.dev/docs/pushnotificationios.html#cancellocalnotification
+  */
   static cancelLocalNotifications(userInfo: Object) {
     invariant(
       RNCPushNotificationIOS,
@@ -278,9 +282,9 @@ class PushNotificationIOS {
   }
 
   /**
-   * Gets the local notifications that are currently scheduled.
-   * @deprecated - use `getPendingNotificationRequests`
-   */
+  * Gets the local notifications that are currently scheduled.
+  * @deprecated - use `getPendingNotificationRequests`
+  */
   static getScheduledLocalNotifications(callback: Function) {
     invariant(
       RNCPushNotificationIOS,
@@ -290,8 +294,8 @@ class PushNotificationIOS {
   }
 
   /**
-   * Gets the pending local notification requests.
-   */
+  * Gets the pending local notification requests.
+  */
   static getPendingNotificationRequests(
     callback: (requests: NotificationRequest[]) => void,
   ) {
@@ -303,11 +307,11 @@ class PushNotificationIOS {
   }
 
   /**
-   * Attaches a listener to remote or local notification events while the app
-   * is running in the foreground or the background.
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#addeventlistener
-   */
+  * Attaches a listener to remote or local notification events while the app
+  * is running in the foreground or the background.
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#addeventlistener
+  */
   static addEventListener(type: PushNotificationEventName, handler: Function) {
     invariant(
       type === 'notification' ||
@@ -350,11 +354,11 @@ class PushNotificationIOS {
   }
 
   /**
-   * Removes the event listener. Do this in `componentWillUnmount` to prevent
-   * memory leaks.
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#removeeventlistener
-   */
+  * Removes the event listener. Do this in `componentWillUnmount` to prevent
+  * memory leaks.
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#removeeventlistener
+  */
   static removeEventListener(type: PushNotificationEventName) {
     invariant(
       type === 'notification' ||
@@ -372,13 +376,13 @@ class PushNotificationIOS {
   }
 
   /**
-   * Requests notification permissions from iOS, prompting the user's
-   * dialog box. By default, it will request all notification permissions, but
-   * a subset of these can be requested by passing a map of requested
-   * permissions.
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#requestpermissions
-   */
+  * Requests notification permissions from iOS, prompting the user's
+  * dialog box. By default, it will request all notification permissions, but
+  * a subset of these can be requested by passing a map of requested
+  * permissions.
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#requestpermissions
+  */
   static requestPermissions(permissions?: {
     alert?: boolean,
     badge?: boolean,
@@ -411,10 +415,10 @@ class PushNotificationIOS {
   }
 
   /**
-   * Unregister for all remote notifications received via Apple Push Notification service.
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#abandonpermissions
-   */
+  * Unregister for all remote notifications received via Apple Push Notification service.
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#abandonpermissions
+  */
   static abandonPermissions() {
     invariant(
       RNCPushNotificationIOS,
@@ -424,11 +428,11 @@ class PushNotificationIOS {
   }
 
   /**
-   * See what push permissions are currently enabled. `callback` will be
-   * invoked with a `permissions` object.
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#checkpermissions
-   */
+  * See what push permissions are currently enabled. `callback` will be
+  * invoked with a `permissions` object.
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#checkpermissions
+  */
   static checkPermissions(callback: Function) {
     invariant(typeof callback === 'function', 'Must provide a valid callback');
     invariant(
@@ -439,11 +443,11 @@ class PushNotificationIOS {
   }
 
   /**
-   * This method returns a promise that resolves to either the notification
-   * object if the app was launched by a push notification, or `null` otherwise.
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#getinitialnotification
-   */
+  * This method returns a promise that resolves to either the notification
+  * object if the app was launched by a push notification, or `null` otherwise.
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#getinitialnotification
+  */
   static getInitialNotification(): Promise<?PushNotificationIOS> {
     invariant(
       RNCPushNotificationIOS,
@@ -457,11 +461,11 @@ class PushNotificationIOS {
   }
 
   /**
-   * You will never need to instantiate `PushNotificationIOS` yourself.
-   * Listening to the `notification` event and invoking
-   * `getInitialNotification` is sufficient
-   *
-   */
+  * You will never need to instantiate `PushNotificationIOS` yourself.
+  * Listening to the `notification` event and invoking
+  * `getInitialNotification` is sufficient
+  *
+  */
   constructor(nativeNotif: Object) {
     this._data = {};
     this._remoteNotificationCompleteCallbackCalled = false;
@@ -469,8 +473,10 @@ class PushNotificationIOS {
     if (this._isRemote) {
       this._notificationId = nativeNotif.notificationId;
     }
+    const { actionIdentifier, actionValue } = this.getPressedActionParameters(nativeNotif);
 
-    this._actionIdentifier = nativeNotif.actionIdentifier;
+    this._actionIdentifier = actionIdentifier;
+    this._actionValue = actionValue;
     this._userText = nativeNotif.userText;
     if (nativeNotif.remote) {
       // Extract data from Apple's `aps` dict as defined:
@@ -508,13 +514,40 @@ class PushNotificationIOS {
       this._fireDate = nativeNotif.fireDate;
     }
   }
-
   /**
-   * This method is available for remote notifications that have been received via:
-   * `application:didReceiveRemoteNotification:fetchCompletionHandler:`
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#finish
-   */
+  * This method is private and return the actionValue and actionIdentifier parameters
+  */
+  getPressedActionParameters(nativeNotif) {
+    const actionIdentifier = nativeNotif?.actionIdentifier?.replace(/\d/g, '');
+    const actionIndex = +nativeNotif?.actionIdentifier?.replace(/\D/g, '');
+    let actionValue = null;
+
+    if (actionIndex && (nativeNotif?.actions || nativeNotif?.userInfo?.actions)) {
+      const actions = nativeNotif?.actions || nativeNotif?.userInfo?.actions;
+      let actionsArray = null;
+
+      if(typeof actions === 'string') {
+        actionsArray = JSON.parse(actions);
+      } else {
+        actionsArray = actions;
+      }
+
+      if(actionsArray != null && actionIndex < actionsArray.length && actionIndex >= 0) {
+        actionValue = actionsArray[actionIndex]?.value;
+      }
+    }
+
+    return {
+      actionIdentifier,
+      actionValue
+    }
+  }
+  /**
+  * This method is available for remote notifications that have been received via:
+  * `application:didReceiveRemoteNotification:fetchCompletionHandler:`
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#finish
+  */
   finish(fetchResult: string) {
     if (
       !this._isRemote ||
@@ -536,8 +569,8 @@ class PushNotificationIOS {
   }
 
   /**
-   * An alias for `getAlert` to get the notification's main message string
-   */
+  * An alias for `getAlert` to get the notification's main message string
+  */
   getMessage(): ?string | ?Object {
     if (typeof this._alert === 'object') {
       return this._alert?.body;
@@ -546,36 +579,36 @@ class PushNotificationIOS {
   }
 
   /**
-   * Gets the sound string from the `aps` object
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#getsound
-   */
+  * Gets the sound string from the `aps` object
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#getsound
+  */
   getSound(): ?string {
     return this._sound;
   }
 
   /**
-   * Gets the category string from the `aps` object
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#getcategory
-   */
+  * Gets the category string from the `aps` object
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#getcategory
+  */
   getCategory(): ?string {
     return this._category;
   }
 
   /**
-   * Gets the notification's main message from the `aps` object
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#getalert
-   */
+  * Gets the notification's main message from the `aps` object
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#getalert
+  */
   getAlert(): ?string | ?Object {
     return this._alert;
   }
 
   /**
-   * Gets the notification's title from the `aps` object
-   *
-   */
+  * Gets the notification's title from the `aps` object
+  *
+  */
   getTitle(): ?string | ?Object {
     if (typeof this._alert === 'object') {
       return this._alert?.title;
@@ -584,9 +617,9 @@ class PushNotificationIOS {
   }
 
   /**
-   * Gets the notification's subtitle from the `aps` object
-   *
-   */
+  * Gets the notification's subtitle from the `aps` object
+  *
+  */
   getSubtitle(): ?string | ?Object {
     if (typeof this._alert === 'object') {
       return this._alert?.subtitle;
@@ -595,51 +628,58 @@ class PushNotificationIOS {
   }
 
   /**
-   * Gets the content-available number from the `aps` object
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#getcontentavailable
-   */
+  * Gets the content-available number from the `aps` object
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#getcontentavailable
+  */
   getContentAvailable(): ContentAvailable {
     return this._contentAvailable;
   }
 
   /**
-   * Gets the badge count number from the `aps` object
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#getbadgecount
-   */
+  * Gets the badge count number from the `aps` object
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#getbadgecount
+  */
   getBadgeCount(): ?number {
     return this._badgeCount;
   }
 
   /**
-   * Gets the data object on the notif
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#getdata
-   */
+  * Gets the data object on the notif
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#getdata
+  */
   getData(): ?Object {
     return this._data;
   }
 
   /**
-   * Gets the thread ID on the notif
-   *
-   * See https://reactnative.dev/docs/pushnotificationios.html#getthreadid
-   */
+  * Gets the thread ID on the notif
+  *
+  * See https://reactnative.dev/docs/pushnotificationios.html#getthreadid
+  */
   getThreadID(): ?string {
     return this._threadID;
   }
 
   /**
-   * Get's the action id of the notification action user has taken.
-   */
+  * Get's the action id of the notification action user has taken.
+  */
   getActionIdentifier(): ?string {
     return this._actionIdentifier;
   }
 
   /**
-   * Gets the text user has inputed if user has taken the text action response.
-   */
+  * Get's the action value of the notification action user has taken.
+  */
+  getActionValue(): ?string {
+    return this._actionValue;
+  }
+
+  /**
+  * Gets the text user has inputed if user has taken the text action response.
+  */
   getUserText(): ?string {
     return this._userText;
   }

@@ -272,12 +272,12 @@ RCT_ENUM_CONVERTER(UIBackgroundFetchResult, (@{
       
     NSMutableDictionary *userInfo = [content.userInfo mutableCopy];
     userInfo[@"userInteraction"] = [NSNumber numberWithInt:1];
-    userInfo[@"actionIdentifier"] = response.actionIdentifier;
+    userInfo[@"actionIdentifier"] = [response.actionIdentifier containsString: @"UNNotificationDefaultActionIdentifier"] ? nil : response.actionIdentifier;;
     
     formattedResponse[@"badge"] = RCTNullIfNil(content.badge);
     formattedResponse[@"sound"] = RCTNullIfNil(content.sound);
     formattedResponse[@"userInfo"] = RCTNullIfNil(RCTJSONClean(userInfo));
-    formattedResponse[@"actionIdentifier"] = RCTNullIfNil(response.actionIdentifier);
+    formattedResponse[@"actionIdentifier"] = [response.actionIdentifier containsString: @"UNNotificationDefaultActionIdentifier"] ? nil : response.actionIdentifier;;
       
     NSString* userText = [response isKindOfClass:[UNTextInputNotificationResponse class]] ? ((UNTextInputNotificationResponse *)response).userText : nil;
     if (userText) {
