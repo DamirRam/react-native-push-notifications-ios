@@ -94,7 +94,7 @@ export type NotificationCategory = {|
    * Notification with this category will have the specified actions.
    */
   id: string,
-  actions: NotificationAction[],
+  buttons: NotificationAction[],
 |};
 
 /**

@@ -197,7 +197,7 @@ export const App = () => {
     PushNotificationIOS.setNotificationCategories([
       {
         id: 'userAction',
-        actions: [
+        buttons: [
           {id: 'open', title: 'Open', options: {foreground: true}},
           {
             id: 'ignore',

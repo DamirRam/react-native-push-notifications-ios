@@ -29,7 +29,7 @@ export type NotificationAlert = {
  */
 export type NotificationCategory = {
   id: string;
-  actions: NotificationAction[];
+  buttons: NotificationAction[];
 };
 
 /**

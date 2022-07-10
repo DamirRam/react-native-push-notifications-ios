@@ -204,7 +204,7 @@ export const App = (): React.Node => {
     PushNotificationIOS.setNotificationCategories([
       {
         id: 'test',
-        actions: [
+        buttons: [
           {id: 'open', title: 'Open', options: {foreground: true}},
           {
             id: 'ignore',

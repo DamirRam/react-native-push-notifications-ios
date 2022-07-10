@@ -522,8 +522,8 @@ class PushNotificationIOS {
     const actionIndex = +nativeNotif?.actionIdentifier?.replace(/\D/g, '');
     let actionValue = null;
 
-    if (actionIndex && (nativeNotif?.actions || nativeNotif?.userInfo?.actions)) {
-      const actions = nativeNotif?.actions || nativeNotif?.userInfo?.actions;
+    if (actionIndex && (nativeNotif?.buttons || nativeNotif?.userInfo?.buttons)) {
+      const actions = nativeNotif?.buttons || nativeNotif?.userInfo?.buttons;
       let actionsArray = null;
 
       if(typeof actions === 'string') {
