@@ -386,7 +386,7 @@ Allows you to add specific actions for notification with specific category.
 `category` is an object containing:
 
 - `id`: Identifier of the notification category. Notification with this category will have the specified actions. (required)
-- `actions`: An array of notification actions to be attached to the notification of category id.
+- `buttons`: An array of notification buttons to be attached to the notification of category id.
 
 `action` is an object containing:
 
