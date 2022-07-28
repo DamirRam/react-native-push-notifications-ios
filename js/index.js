@@ -522,7 +522,7 @@ class PushNotificationIOS {
     const actionIndex = +nativeNotif?.actionIdentifier?.replace(/\D/g, '');
     let actionValue = null;
 
-    if (actionIndex && (nativeNotif?.buttons || nativeNotif?.userInfo?.buttons)) {
+    if (actionIndex >= 0 && (nativeNotif?.buttons || nativeNotif?.userInfo?.buttons)) {
       const actions = nativeNotif?.buttons || nativeNotif?.userInfo?.buttons;
       let actionsArray = null;
 
@@ -532,8 +532,10 @@ class PushNotificationIOS {
         actionsArray = actions;
       }
 
-      if(actionsArray != null && actionIndex < actionsArray.length && actionIndex >= 0) {
-        actionValue = actionsArray[actionIndex]?.value;
+      if(actionsArray != null && 
+        actionIndex < actionsArray.length &&
+        actionsArray[actionIndex]?.value) {
+          actionValue = actionsArray[actionIndex]?.value;
       }
     }
 
