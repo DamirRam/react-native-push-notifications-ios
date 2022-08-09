@@ -19,6 +19,9 @@ static NSString *const kRemoteNotificationRegistrationFailed = @"RemoteNotificat
 
 static NSString *const kErrorUnableToRequestPermissions = @"E_UNABLE_TO_REQUEST_PERMISSIONS";
 
+NSDictionary *notificationResponse = nil;
+Boolean      isInitialNotification = true;
+
 #if !TARGET_OS_TV
 @interface RNCPushNotificationIOS ()
 @property (nonatomic, strong) NSMutableDictionary *remoteNotificationCallbacks;
@@ -123,9 +126,14 @@ RCT_EXPORT_MODULE()
 
 + (void)didReceiveNotificationResponse:(UNNotificationResponse *)response
 API_AVAILABLE(ios(10.0)) {
-    [[NSNotificationCenter defaultCenter] postNotificationName:kLocalNotificationReceived
-                                                      object:self
-                                                    userInfo:[RCTConvert RCTFormatUNNotificationResponse:response]];
+	   notificationResponse = [RCTConvert RCTFormatUNNotificationResponse:response];
+
+		 if (isInitialNotification == false) {
+       [[NSNotificationCenter defaultCenter] postNotificationName:kLocalNotificationReceived
+                                                           object:self
+                                                         userInfo:notificationResponse];
+		 }
+
 }
 
 - (void)handleLocalNotificationReceived:(NSNotification *)notification
@@ -434,8 +442,11 @@ RCT_EXPORT_METHOD(getInitialNotification:(RCTPromiseResolveBlock)resolve
     [self.bridge.launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey] mutableCopy];
     UILocalNotification *initialLocalNotification =
     self.bridge.launchOptions[UIApplicationLaunchOptionsLocalNotificationKey];
-  
-    if (initialNotification) {
+
+		if (initialNotification && notificationResponse) {
+      resolve(notificationResponse);
+			notificationResponse = nil;
+		} else if (initialNotification) {
       initialNotification[@"userInteraction"] = [NSNumber numberWithInt:1];
       initialNotification[@"remote"] = @YES;
       resolve(initialNotification);
@@ -444,6 +455,8 @@ RCT_EXPORT_METHOD(getInitialNotification:(RCTPromiseResolveBlock)resolve
     } else {
       resolve((id)kCFNull);
     }
+
+		isInitialNotification = false;
 }
 
 /**
